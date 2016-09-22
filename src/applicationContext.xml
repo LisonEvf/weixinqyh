@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       
+    <!--通配加载所有properties-->
+	<context:property-placeholder location="classpath*:*.properties"/>  
+	
+	<!--或者
+	加载jdbc.properties
+	<context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true"/>
+	加载weixin.properties
+	<context:property-placeholder location="classpath:weixin.properties" ignore-unresolvable="true"/>
+	-->
+	
+	<!-- 配置jdbcTemplate数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+	</bean>
+
+	<!-- 配置jdbcTemplate模板 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- weixinDao jdbcTemplate注入 -->
+    <bean id="weixinDao" class="web.weixin.Dao.WeixinDao">  
+        <property name="jdbcTemplate">  
+            <ref bean="jdbcTemplate" />  
+        </property>  
+    </bean>
+    
+    <!-- 配置微信配置数据源 -->
+	<bean id="weixindataSource" class="web.weixin.Model.Weixin">
+		<property name="token">
+			<value>${weixin.token}</value>
+		</property>
+		<property name="encodingAesKey">
+			<value>${weixin.encodingAesKey}</value>
+		</property>
+		<property name="corpId">
+			<value>${weixin.corpId}</value>
+		</property>
+		<property name="corpsecret">
+			<value>${weixin.corpsecret}</value>
+		</property>
+	</bean>
+
+</beans>
